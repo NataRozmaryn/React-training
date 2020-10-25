@@ -1,10 +1,10 @@
 import React, { } from 'react';
 
-const Button = ({values, onClick}, key) => {
+const Button = ({values, onClick}) => {
   let buttons = Array.isArray(values) ? values : [values];
   return (
-    buttons.map((button, index) => {
-      return <input type="button" key={key+"btn"+index} value={button} onClick={() => onClick(button)}/>
+    buttons.map((button) => {
+      return <input type="button" key={button} value={button} onClick={() => onClick(button)}/>
     })
   );
 }

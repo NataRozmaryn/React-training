@@ -1,20 +1,11 @@
 import OperationBtn from "./components/OperationBtn";
 import DigitalBtn from "./components/DigitalBtn";
 import Separator from "./components/Separator";
-
-export const OperationButtons = {
-    add: "+",
-    subtract: "-",
-    multiply: "*",
-    divide: "/",
-    cancel: "C",
-    dot: ".",
-    evaluate: "="
-};
+import { OperationButtons } from "./calcProcessor";
 
 export const CalculatorButtons = 
 [
-    [OperationBtn, OperationButtons.cancel],
+    [OperationBtn, [OperationButtons.history, OperationButtons.engineering, OperationButtons.cancel]],
     [Separator],
     [DigitalBtn, [1,2,3]],
     [OperationBtn, OperationButtons.divide],
@@ -29,3 +20,11 @@ export const CalculatorButtons =
     [DigitalBtn, [0]],
     [OperationBtn, [OperationButtons.evaluate, OperationButtons.multiply]],
 ]
+export const engineeringCalculatorButtons = [...CalculatorButtons];
+engineeringCalculatorButtons.splice(
+    2,0,[OperationBtn, 
+        [OperationButtons.sqrt, OperationButtons.pow,
+            OperationButtons.log2, OperationButtons.factorial]], [Separator]
+    );
+engineeringCalculatorButtons.splice(
+    0,1,[OperationBtn, [OperationButtons.history, OperationButtons.basic, OperationButtons.cancel]]);

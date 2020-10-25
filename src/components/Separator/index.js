@@ -1,6 +1,6 @@
 import React, { } from 'react';
 
-const Separator = ({values}, key) => {
+const Separator = ({values}) => {
   return (
     <br/>
   );

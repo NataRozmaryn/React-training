@@ -6,11 +6,8 @@ const ButtonsGrid = ({buttons, onClick}) => {
   }
   return (
     buttons.map((button, index) => {
-        return React.createElement(button[0], {
-            key: index,
-            values: button[1],
-            onClick: (value) => buttonClick(button[0], value)
-        });
+      let ButtonComponent = button[0];
+      return <ButtonComponent key={index} values={button[1]} onClick={(value) => buttonClick(button[0], value)}/>
     })
   );
 }
