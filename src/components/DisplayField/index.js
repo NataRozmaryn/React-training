@@ -1,8 +1,9 @@
 import React, { } from 'react';
 
-const DisplayField = ({value}) => {
+const DisplayField = ({value, style}) => {
+  console.log(style);
   return (
-      <input type="text" id="result" value={value} readOnly/>
+      <input className={style} type="text" id="result" value={value} readOnly/>
   );
 }
 

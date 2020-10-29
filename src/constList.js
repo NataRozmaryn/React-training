@@ -1,12 +1,28 @@
 import OperationBtn from "./components/OperationBtn";
 import DigitalBtn from "./components/DigitalBtn";
 import Separator from "./components/Separator";
-import { OperationButtons } from "./calcProcessor";
+import { OperationButtons } from "./processor/calcProcessor";
 
-export const CalculatorButtons = 
-[
-    [OperationBtn, [OperationButtons.history, OperationButtons.engineering, OperationButtons.cancel]],
-    [Separator],
+const NumbersButtons = {
+    ONE: 1,
+    TWO: 2,
+    THREE: 3,
+    FOUR: 4,
+    FIVE: 5,
+    SIX: 6,
+    SEVEN: 7,
+    EIGHT: 8,
+    NINE: 9,
+    ZERO: 0,
+};
+
+export const DisplayStyles = {
+    VARIABLES: "variables",
+    RESULT: "result",
+    CLEAR: ""
+};
+
+const BasicButtons = [
     [DigitalBtn, [1,2,3]],
     [OperationBtn, OperationButtons.divide],
     [Separator],
@@ -19,12 +35,24 @@ export const CalculatorButtons =
     [OperationBtn, OperationButtons.dot],
     [DigitalBtn, [0]],
     [OperationBtn, [OperationButtons.evaluate, OperationButtons.multiply]],
-]
-export const engineeringCalculatorButtons = [...CalculatorButtons];
-engineeringCalculatorButtons.splice(
-    2,0,[OperationBtn, 
-        [OperationButtons.sqrt, OperationButtons.pow,
-            OperationButtons.log2, OperationButtons.factorial]], [Separator]
-    );
-engineeringCalculatorButtons.splice(
-    0,1,[OperationBtn, [OperationButtons.history, OperationButtons.basic, OperationButtons.cancel]]);
+];
+
+const AfterButtons = [
+    [OperationBtn, 
+    [OperationButtons.sqrt, OperationButtons.pow,
+        OperationButtons.log2, OperationButtons.factorial]], [Separator]
+];
+
+const BeforeButtons = [
+    [OperationBtn, [OperationButtons.history, OperationButtons.engineering, OperationButtons.cancel]],
+    [Separator]
+];
+export const CalculatorButtons = [
+    ...BeforeButtons,
+    ...BasicButtons
+];
+export const engineeringCalculatorButtons = [
+    ...BeforeButtons,
+    ...AfterButtons,
+    ...BasicButtons,
+];

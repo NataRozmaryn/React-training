@@ -38,3 +38,9 @@ input[type = text] {
   padding: 10px;
   box-shadow: 4px 0px 12px black inset;
 }
+.variables{
+  border: 3px solid yellow;
+}
+.result{
+  border: 3px solid lightgreen;
+}

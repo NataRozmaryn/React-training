@@ -1,3 +1,7 @@
+import BinaryOperation from "./binaryOperation";
+import UnaryOperation from "./unaryOperation";
+import { PowOperation } from "./advancedOperations";
+
 export const OperationButtons = {
     add: "+",
     subtract: "-",
@@ -15,12 +19,33 @@ export const OperationButtons = {
     factorial: "n!"
 };
 
+export const ArithmeticOperation = {
+    [OperationButtons.add]: new BinaryOperation(OperationButtons.add, (x,y) => x + y),
+    [OperationButtons.subtract]: new BinaryOperation(OperationButtons.subtract, (x,y) => x - y),
+    [OperationButtons.multiply]: new BinaryOperation(OperationButtons.multiply, (x,y) => x * y),
+    [OperationButtons.divide]: new BinaryOperation(OperationButtons.divide, (x,y) => x / y),
+    [OperationButtons.pow]: new PowOperation(),
+    [OperationButtons.sqrt]: new UnaryOperation(OperationButtons.sqrt, (x) => Math.sqrt(x)),
+    [OperationButtons.log2]: new UnaryOperation(OperationButtons.log2, (x) => Math.log2(x)),
+    [OperationButtons.factorial]: new UnaryOperation(OperationButtons.factorial, (x) => CalculatorProcessor.factorial(x)),
+};
+
+class ProcessorHistory {
+    #history = [];
+
+    add = (operation) => this.#history.push([operation.result, operation.expression]);
+    clear = () => this.#history = [];
+    length = () => this.#history.length;
+    item = (index) => this.#history[index];
+    map = (callbackfn, thisArg) => this.#history.map(callbackfn, thisArg);
+}
+
 class CalculatorProcessor {
     #variables = ["",""];
     #operation = "";
     #curVariable = 0;
     #expression = "";
-    #history = [];
+    #history = new ProcessorHistory();
 
     processDigit(value) {
         this.#variables[this.#curVariable] += value.toString();
@@ -34,26 +59,25 @@ class CalculatorProcessor {
         this.#operation = "";
     }
 
-    updateExpression() {
-        if(this.#operation === "pow") {
-            this.#expression = "pow(" + this.#variables[0] + ", " + this.#variables[1] + ")";
+    updateExpression() {        
+        if(this.#operation) {
+            this.#expression = ArithmeticOperation[this.#operation].expressionCb(this.#operation, this.#variables);
         } else {
-            this.#expression = this.#variables[0] + this.#operation + this.#variables[1];
+            this.#expression = this.#variables[0];
         }
     }
-    factorial(n) {
+    static factorial(n) {
         return (n !== 1) ? n * this.factorial(n - 1) : 1;
     }
 
-    processUnaryOperation(operation, operationCb) {
-        let histExpression;
-        let x = parseFloat(this.#variables[0]);
+    processUnaryOperation(operation) {        
         if (this.#curVariable === 1) {
-            this.processOperation('=');
+            this.processOperation(OperationButtons.evaluate);
         }
-        histExpression = operation+'('+this.#variables[0]+')';
-        this.#variables[0] = operationCb(x).toString();
-        this.#history.push([this.#variables[0], histExpression]);
+
+        let arithmeticOperation = ArithmeticOperation[operation];
+        this.#variables[0] = arithmeticOperation.evaluate(this.#variables).toString();
+        this.#history.add(arithmeticOperation);
     }
 
     processOperation(operation) {        
@@ -71,34 +95,21 @@ class CalculatorProcessor {
                     this.processDigit(operation)
                 break;
             case OperationButtons.sqrt:
-                this.processUnaryOperation(operation, (x) => Math.sqrt(x));
-                break;
             case OperationButtons.log2:
-                this.processUnaryOperation(operation, (x) => Math.log2(x));
-                break;
             case OperationButtons.factorial: 
-                this.processUnaryOperation(operation, (x) => this.factorial(x));
+                this.processUnaryOperation(operation);
                 break;
             case OperationButtons.cancel:
                 this.reset();
                 break;
             case OperationButtons.evaluate:
                 if (this.#curVariable === 1 && this.#variables[1] !== '') {
-                    let res;
-                    let histExpression;
-                    if(this.#operation === "pow") {
-                        res = Math.pow(parseFloat(this.#variables[0]), parseFloat(this.#variables[1]));
-                        histExpression = "pow(" + this.#variables[0] + ", " + this.#variables[1] + ")";
-                    } else {
-                        // eslint-disable-next-line no-eval
-                        res = eval(this.#expression);
-                        histExpression = this.#variables[0] + this.#operation + this.#variables[1];
-                    }
-                    // fix .00000001 in floating number operations
-                    res = Math.floor(res * 100000)/100000;
-                    this.#history.push([res, histExpression]);
+                    let arithmeticOperation =  ArithmeticOperation[this.#operation];
+                    arithmeticOperation.evaluate(this.#variables);
+                    this.#history.add(arithmeticOperation);
+
                     this.reset();
-                    this.#expression = res.toString(); 
+                    this.#expression = arithmeticOperation.result.toString(); 
                     this.#variables[0] = this.#expression;
                 } else {
                     this.#operation = '';
@@ -115,9 +126,6 @@ class CalculatorProcessor {
     }
     get history() {
         return this.#history;
-    }
-    clearHistory() {
-        this.#history = [];
     }
 }
 

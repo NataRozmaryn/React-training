@@ -1,13 +1,14 @@
 import React from 'react';
 import Button from '../../components/Button'
 
-const History = ({calcProcessor, onClick, onClear}) => {
+const History = ({history, onClick, onClear}) => {
   const ClearHistory = () => {
-    calcProcessor.clearHistory();
+    history.clear();
     onClear();
   }
  
-  let list = calcProcessor.history;
+  // let list = calcProcessor.history;
+  let list = history;
 
   return (
     <>
